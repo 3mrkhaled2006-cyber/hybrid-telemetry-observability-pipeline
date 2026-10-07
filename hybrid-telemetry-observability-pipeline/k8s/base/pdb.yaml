@@ -1,0 +1,12 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: hybrid-telemetry-pipeline-pdb
+  namespace: telemetry-system
+  labels:
+    app.kubernetes.io/name: hybrid-telemetry-pipeline
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hybrid-telemetry-pipeline

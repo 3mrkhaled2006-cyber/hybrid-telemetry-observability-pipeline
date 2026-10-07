@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hybrid-telemetry-pipeline-netpol
+  namespace: telemetry-system
+  labels:
+    app.kubernetes.io/name: hybrid-telemetry-pipeline
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: hybrid-telemetry-pipeline
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow incoming scraping on port 9102 and health checks on port 8080
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: telemetry-system
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+      ports:
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 9102
+  egress:
+    # Allow CoreDNS lookups
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53

@@ -1,0 +1,313 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "title": "⚡ Four Golden Signals & Core SRE Metrics",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "mappings": [],
+          "unit": "reqps"
+        }
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 1 },
+      "id": 1,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.2.3",
+      "targets": [
+        {
+          "expr": "sum(rate(telemetry_samples_processed_total[1m]))",
+          "legendFormat": "Throughput",
+          "refId": "A"
+        }
+      ],
+      "title": "Throughput (Samples / sec)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 0.010 },
+              { "color": "red", "value": 0.025 }
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 1 },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.2.3",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(telemetry_dsp_processing_latency_seconds_bucket[1m])) by (le))",
+          "legendFormat": "P99 Latency",
+          "refId": "A"
+        }
+      ],
+      "title": "P99 DSP Latency (SLO: < 15ms)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 2.5 },
+              { "color": "red", "value": 4.2 }
+            ]
+          },
+          "unit": "k"
+        }
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 1 },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.2.3",
+      "targets": [
+        {
+          "expr": "max(telemetry_cryo_temperature_kelvin)",
+          "legendFormat": "Max Cryo Temp",
+          "refId": "A"
+        }
+      ],
+      "title": "Peak Magnet Temperature",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 99.0 },
+              { "color": "green", "value": 99.9 }
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 1 },
+      "id": 4,
+      "options": {
+        "min": 98,
+        "max": 100,
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "10.2.3",
+      "targets": [
+        {
+          "expr": "(1 - (sum(rate(telemetry_anomalies_detected_total{alarm_status=~\"CRITICAL_QUENCH|BEAM_DUMP_TRIGGERED\"}[1h])) / (sum(rate(telemetry_samples_processed_total[1h])) + 1e-6))) * 100",
+          "legendFormat": "Availability SLO",
+          "refId": "A"
+        }
+      ],
+      "title": "SLO Availability (Target: 99.9%)",
+      "type": "gauge"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+      "id": 101,
+      "title": "🔬 Low-Level Detector & Cryogenic Physics Telemetry",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2
+          },
+          "unit": "k"
+        }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+      "id": 5,
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "expr": "telemetry_cryo_temperature_kelvin",
+          "legendFormat": "{{channel_id}} Temp",
+          "refId": "A"
+        },
+        {
+          "expr": "telemetry_cryo_temperature_ewma_kelvin",
+          "legendFormat": "{{channel_id}} EWMA",
+          "refId": "B"
+        }
+      ],
+      "title": "Cryogenic Temperature & EWMA Drift (Quench Threshold = 4.2 K)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+      "id": 6,
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      },
+      "targets": [
+        {
+          "expr": "telemetry_beam_intensity_protons",
+          "legendFormat": "{{channel_id}} Beam Intensity",
+          "refId": "A"
+        },
+        {
+          "expr": "telemetry_blm_radiation_gy_per_sec * 1e12",
+          "legendFormat": "{{channel_id}} Radiation (pGy/s)",
+          "refId": "B"
+        }
+      ],
+      "title": "Circulating Beam Intensity & Beam Loss Radiation",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 14 },
+      "id": 102,
+      "title": "📈 DSP Latency Distribution & Signal Quality",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "lineWidth": 2 },
+          "unit": "s"
+        }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 15 },
+      "id": 7,
+      "options": {
+        "legend": { "displayMode": "table", "placement": "bottom" }
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(telemetry_dsp_processing_latency_seconds_bucket[1m])) by (le))",
+          "legendFormat": "P99 Processing Latency",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.90, sum(rate(telemetry_dsp_processing_latency_seconds_bucket[1m])) by (le))",
+          "legendFormat": "P90 Processing Latency",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(telemetry_dsp_processing_latency_seconds_bucket[1m])) by (le))",
+          "legendFormat": "P50 Processing Latency",
+          "refId": "C"
+        }
+      ],
+      "title": "DSP Processing Latency Quantiles (P50, P90, P99)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "lineWidth": 2 },
+          "unit": "dB"
+        }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 15 },
+      "id": 8,
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      },
+      "targets": [
+        {
+          "expr": "telemetry_rf_snr_decibels",
+          "legendFormat": "{{channel_id}} RF SNR",
+          "refId": "A"
+        },
+        {
+          "expr": "telemetry_cryo_temp_zscore",
+          "legendFormat": "{{channel_id}} Temp Z-Score",
+          "refId": "B"
+        }
+      ],
+      "title": "RF Cavity SNR (dB) & Temperature Z-Score Anomaly Trigger",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["sre", "cern", "telemetry", "dsp", "google-sre"],
+  "time": { "from": "now-15m", "to": "now" },
+  "timepicker": {
+    "refresh_intervals": ["1s", "2s", "5s", "10s", "30s", "1m"]
+  },
+  "timezone": "utc",
+  "title": "Hybrid Telemetry & Detector Observability Pipeline",
+  "uid": "hybrid-telemetry-main",
+  "version": 1
+}

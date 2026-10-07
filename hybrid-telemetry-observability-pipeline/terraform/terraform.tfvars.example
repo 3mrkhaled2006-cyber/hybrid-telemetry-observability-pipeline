@@ -1,0 +1,7 @@
+environment                = "production"
+kubeconfig_path            = "~/.kube/config"
+kubeconfig_context         = "cern-k8s-cluster"
+namespace                  = "telemetry-system"
+telemetry_image            = "ghcr.io/org/hybrid-telemetry-pipeline:1.0.0"
+replicas                   = 3
+enable_observability_stack = true

@@ -1,0 +1,78 @@
+groups:
+  - name: telemetry_sre_slo_alerts
+    rules:
+      - alert: TelemetryCriticalBurnRate1h
+        expr: |
+          (
+            sum(rate(telemetry_anomalies_detected_total{alarm_status=~"CRITICAL_QUENCH|BEAM_DUMP_TRIGGERED"}[1h]))
+            /
+            (sum(rate(telemetry_samples_processed_total[1h])) + 1e-6)
+          ) > (14.4 * 0.001)
+        for: 2m
+        labels:
+          severity: critical
+          tier: sre-platform
+        annotations:
+          summary: "1-hour Error Budget burn rate is critical (>14.4x)"
+          description: "Telemetry error rate over 1h is consuming 2% of total 30-day error budget in 1 hour. Immediate mitigation required."
+          runbook_url: "docs/RUNBOOK.md#telemetry-critical-burn-rate"
+
+      - alert: TelemetryHighBurnRate6h
+        expr: |
+          (
+            sum(rate(telemetry_anomalies_detected_total{alarm_status=~"CRITICAL_QUENCH|BEAM_DUMP_TRIGGERED"}[6h]))
+            /
+            (sum(rate(telemetry_samples_processed_total[6h])) + 1e-6)
+          ) > (6.0 * 0.001)
+        for: 15m
+        labels:
+          severity: warning
+          tier: sre-platform
+        annotations:
+          summary: "6-hour Error Budget burn rate is elevated (>6x)"
+          description: "Telemetry error rate over 6h is consuming 5% of monthly error budget. Schedule investigation."
+          runbook_url: "docs/RUNBOOK.md#telemetry-high-burn-rate"
+
+      - alert: CryogenicQuenchImminent
+        expr: telemetry_cryo_temperature_kelvin > 4.2
+        for: 5s
+        labels:
+          severity: critical
+          domain: accelerator-safety
+        annotations:
+          summary: "Superconducting magnet quench threshold breached (>4.2 K)"
+          description: "Magnet temperature on channel {{ $labels.channel_id }} reached {{ $value }}K. Interlock triggered to prevent physical conductor damage."
+          runbook_url: "docs/RUNBOOK.md#cryogenic-quench"
+
+      - alert: BeamLossRadiationSurge
+        expr: telemetry_blm_radiation_gy_per_sec > 0.005
+        for: 2s
+        labels:
+          severity: critical
+          domain: accelerator-safety
+        annotations:
+          summary: "Beam loss radiation threshold exceeded (>5 mGy/s)"
+          description: "Sector {{ $labels.channel_id }} radiation monitor recorded {{ $value }} Gy/s. Automatic beam abort initiated."
+          runbook_url: "docs/RUNBOOK.md#beam-loss"
+
+      - alert: DSPProcessingLatencyP99Breached
+        expr: job:telemetry_dsp_latency:p99_1m > 0.025
+        for: 1m
+        labels:
+          severity: warning
+          domain: performance
+        annotations:
+          summary: "P99 DSP processing latency breached (>25ms)"
+          description: "P99 processing latency is {{ $value }}s. Pods may be CPU-throttled. Autoscale check required."
+          runbook_url: "docs/RUNBOOK.md#dsp-latency"
+
+      - alert: TelemetryPipelineInstanceDown
+        expr: up{job="hybrid-telemetry-pipeline"} == 0
+        for: 15s
+        labels:
+          severity: critical
+          domain: availability
+        annotations:
+          summary: "Telemetry pipeline daemon is unreachable"
+          description: "Prometheus cannot scrape {{ $labels.instance }}. Pod may be crashed or restarting."
+          runbook_url: "docs/RUNBOOK.md#instance-down"

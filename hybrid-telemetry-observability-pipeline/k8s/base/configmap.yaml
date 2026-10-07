@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: telemetry-pipeline-config
+  namespace: telemetry-system
+  labels:
+    app.kubernetes.io/name: hybrid-telemetry-pipeline
+data:
+  PIPELINE_ENVIRONMENT: "production"
+  PIPELINE_LOG_LEVEL: "INFO"
+  PIPELINE_SAMPLING_RATE_HZ: "100.0"
+  PIPELINE_WINDOW_SIZE: "128"
+  PIPELINE_NUM_CHANNELS: "4"
+  PIPELINE_INJECT_ANOMALIES: "true"
+  PIPELINE_ANOMALY_PROBABILITY: "0.03"
+  PIPELINE_HEALTH_PORT: "8080"
+  PIPELINE_METRICS_PORT: "9102"

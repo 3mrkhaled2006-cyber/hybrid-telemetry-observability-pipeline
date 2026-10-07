@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: hybrid-telemetry-pipeline
+  namespace: telemetry-system
+  labels:
+    app.kubernetes.io/name: hybrid-telemetry-pipeline
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hybrid-telemetry-pipeline
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 2s
+      scrapeTimeout: 1s
+      honorLabels: true
