@@ -245,4 +245,4 @@ terraform apply
 
 ## 📜 License & Author
 
-Developed by Principal Systems & Reliability Architect candidate. Open-source under the [MIT License](LICENSE).
+Developed by Amr khaled . Open-source under the [MIT License](LICENSE).
